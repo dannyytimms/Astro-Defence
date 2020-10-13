@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: SprayPowerup
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectPool
+  objectToPool: {fileID: 8818069133372342684, guid: f0e1d2d398ea9cb41ad28dbc45c3b8f9,
+    type: 3}
+  poolQuantity: 1
