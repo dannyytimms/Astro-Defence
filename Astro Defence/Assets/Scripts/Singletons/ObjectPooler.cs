@@ -1,21 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Poolable Object", menuName = "ScriptableObjects/ObjectPoolScriptableObject", order = 1)]
-public class ObjectPool : ScriptableObject
-{
-    public string objectName { get { return objectToPool.name; } }
-    public List<GameObject> pooledObjects { get; set; }
-    public GameObject objectToPool;
-    public int poolQuantity;
-}
-
 public class ObjectPooler : MonoBehaviour
 {
     public static ObjectPooler SharedInstance;
     
     public List<ObjectPool> pooledObjects;
-    private Dictionary<string, ObjectPool> keyedObjectPools = new Dictionary<string, ObjectPool>();
+    private Dictionary<string, ObjectPool> keyedPooledObjects = new Dictionary<string, ObjectPool>();
 
     private void Awake()
     {
@@ -26,7 +17,7 @@ public class ObjectPooler : MonoBehaviour
     {
         foreach (ObjectPool op in pooledObjects)
         {
-            op.pooledObjects = new List<GameObject>();
+            op.objects = new List<GameObject>();
 
             GameObject parent = new GameObject(name = op.objectName);
             parent.transform.parent = transform;
@@ -37,25 +28,25 @@ public class ObjectPooler : MonoBehaviour
             {
                 temp = Instantiate(op.objectToPool, parent.transform);
                 temp.SetActive(false);
-                op.pooledObjects.Add(temp);
+                op.objects.Add(temp);
             }
-            keyedObjectPools.Add(op.objectToPool.name, op);
+            keyedPooledObjects.Add(op.objectToPool.name, op);
         }
         pooledObjects = null; //we don't need these now that we have converted them to a dictionary.
 
-        gameObject.name = "Object Pooler";
+      //  gameObject.name = "Object Pooler";
     }
 
     public GameObject GetPooledObject(string name) //this is called when we want to spawn a new object. I.E bullet, asteroid, etc.
     {
-        ObjectPool pool = keyedObjectPools[name];
+        ObjectPool pool = keyedPooledObjects[name];
         if (pool == null) { Debug.Log("Didn't get object."); return null; }//we couldnt find the item in the list. Perhaps it hasn't been added to the list in the editor.
 
         for (int i = 0; i < pool.poolQuantity; i++)
         {
-            if (!pool.pooledObjects[i].activeInHierarchy)
+            if (!pool.objects[i].activeInHierarchy)
             {
-                return pool.pooledObjects[i];
+                return pool.objects[i];
             }
         }
         return null;
@@ -64,9 +55,9 @@ public class ObjectPooler : MonoBehaviour
     public void ResetSceneObjects()
     {
         //we call this when the player dies and we want to "destroy" all powerups, asteroids, and bullets.
-        foreach(KeyValuePair<string, ObjectPool> kv in keyedObjectPools)
+        foreach(KeyValuePair<string, ObjectPool> kv in keyedPooledObjects)
         {
-            foreach(var op in kv.Value.pooledObjects)
+            foreach(var op in kv.Value.objects)
             {
                 op.SetActive(false);
             }
